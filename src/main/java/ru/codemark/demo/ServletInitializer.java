@@ -1,4 +1,4 @@
-package com.codemark.demo;
+package ru.codemark.demo;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

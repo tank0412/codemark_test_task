@@ -1,4 +1,4 @@
-package com.codemark.demo;
+package ru.codemark.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

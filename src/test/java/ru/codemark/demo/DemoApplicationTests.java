@@ -1,4 +1,4 @@
-package com.codemark.demo;
+package ru.codemark.demo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
