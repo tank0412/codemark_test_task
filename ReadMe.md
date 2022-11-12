@@ -4,4 +4,7 @@
 * Spring Boot 2.7.5
 * H2: localhost:8080/h2-console/
 * Flyway
+* Lombok
 
+### WSDL:
+* localhost:8080/ws/users.wsdl

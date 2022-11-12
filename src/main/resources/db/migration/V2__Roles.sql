@@ -9,7 +9,7 @@ INSERT INTO role (name) VALUES ('Оператор');
 
 --many to many
 CREATE TABLE user_role (
-user_login varchar(64) REFERENCES "USER"(login),
+user_login varchar(64) REFERENCES "user"(login),
 role_id INT REFERENCES role(role_id)
 );
 
