@@ -1,5 +1,6 @@
 package ru.codemark.demo.service;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.codemark.demo.dto.UserDto;
@@ -19,13 +20,15 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    @Transactional
     public User getUserByLogin(String login) {
-        return userRepository.findByLogin(login);
+        User userByLogin = userRepository.findByLogin(login);
+        Hibernate.initialize(userByLogin.getUserRoles());
+        return userByLogin;
     }
 
     @Transactional
     public Integer deleteUserByLogin(String login) {
-        System.out.println(login);
         return userRepository.deleteByLogin(login);
     }
 

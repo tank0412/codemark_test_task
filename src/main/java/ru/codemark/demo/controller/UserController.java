@@ -1,5 +1,6 @@
 package ru.codemark.demo.controller;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -11,6 +12,7 @@ import ru.codemark.demo.service.UserService;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Endpoint
@@ -27,7 +29,7 @@ public class UserController {
         List<User> userResponseList = response.getUser();
 
         List<User> convertedSavedUsers = allUsers.stream()
-                .map(this::userToWsdlUser)
+                .map(user -> userToWsdlUser(user, false))
                 .collect(Collectors.toList());
         userResponseList.addAll(convertedSavedUsers);
 
@@ -45,7 +47,7 @@ public class UserController {
         List<User> userResponseList = response.getUser();
 
         if (userByLogin != null) {
-            userResponseList.add(userToWsdlUser(userByLogin));
+            userResponseList.add(userToWsdlUser(userByLogin, true));
         }
 
         QName qname = new QName("getUserByLoginRequest");
@@ -66,10 +68,26 @@ public class UserController {
                 StandardResponse.class, response);
     }
 
-    private User userToWsdlUser(ru.codemark.demo.entity.User savedUser) {
+    private User userToWsdlUser(ru.codemark.demo.entity.User savedUser, boolean includeRoles) {
         User user = new User();
         user.setLogin(savedUser.getLogin());
         user.setName(savedUser.getName());
+
+        if (includeRoles) {
+            List<Role> roleList = user.getRole();
+            Set<ru.codemark.demo.entity.Role> savedUserUserRoles = savedUser.getUserRoles();
+
+            if (savedUserUserRoles != null && savedUserUserRoles.size() > 0) {
+                //convert user role to xml user role
+                for (ru.codemark.demo.entity.Role savedRole : savedUserUserRoles) {
+                    Role role = new Role();
+                    role.setRoleId(savedRole.getRoleId());
+                    role.setName(savedRole.getName());
+                    roleList.add(role);
+                }
+            }
+        }
+
         return user;
     }
 
