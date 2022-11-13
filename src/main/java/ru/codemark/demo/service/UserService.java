@@ -6,6 +6,7 @@ import ru.codemark.demo.dto.UserDto;
 import ru.codemark.demo.entity.User;
 import ru.codemark.demo.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,12 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    @Transactional
+    public Integer deleteUserByLogin(String login) {
+        System.out.println(login);
+        return userRepository.deleteByLogin(login);
     }
 
 //    private List<UserDto> usersToDto(List<User> users) {

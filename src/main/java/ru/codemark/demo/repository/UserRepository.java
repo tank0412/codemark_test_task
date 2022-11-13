@@ -10,4 +10,6 @@ import java.util.List;
 public interface UserRepository extends CrudRepository<User, String> {
     @Override
     List<User> findAll();
+
+    Integer deleteByLogin(String login);
 }

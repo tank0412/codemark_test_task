@@ -6,10 +6,27 @@
     <xs:element name="getUsersRequest">
     </xs:element>
 
+    <xs:element name="deleteUsersRequest">
+        <xs:complexType>
+        <xs:sequence>
+            <xs:element name="login" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    </xs:element>
+
     <xs:element name="getUsersResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="user" type="tns:user" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="standardResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="success" type="xs:boolean"/>
+                <xs:element name="errors" type="xs:string" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

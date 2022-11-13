@@ -3,9 +3,12 @@ package ru.codemark.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import ru.codemark.demo.dto.UserDto;
+import ru.codemark.demo.generated.DeleteUsersRequest;
 import ru.codemark.demo.generated.GetUsersResponse;
+import ru.codemark.demo.generated.StandardResponse;
 import ru.codemark.demo.generated.User;
 import ru.codemark.demo.service.UserService;
 
@@ -36,6 +39,19 @@ public class UserController {
         QName qname = new QName("getUsersRequest");
         return new JAXBElement<>(qname,
                 GetUsersResponse.class, response);
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "deleteUsersRequest")
+    @ResponsePayload
+    public JAXBElement<StandardResponse> deleteUser(@RequestPayload DeleteUsersRequest request) {
+        Integer deletedNumber = userService.deleteUserByLogin(request.getLogin());
+
+        StandardResponse response = new StandardResponse();
+        response.setSuccess(deletedNumber > 0);
+
+        QName qname = new QName("getUsersRequest");
+        return new JAXBElement<>(qname,
+                StandardResponse.class, response);
     }
 
     private User userToWsdlUser(ru.codemark.demo.entity.User savedUser) {
