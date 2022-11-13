@@ -6,12 +6,20 @@
     <xs:element name="getUsersRequest">
     </xs:element>
 
-    <xs:element name="deleteUsersRequest">
+    <xs:element name="deleteUserByLoginRequest">
         <xs:complexType>
         <xs:sequence>
             <xs:element name="login" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getUserByLoginRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="login" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="getUsersResponse">

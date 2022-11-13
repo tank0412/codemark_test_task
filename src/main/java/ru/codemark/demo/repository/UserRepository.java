@@ -8,8 +8,10 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, String> {
-    @Override
+
     List<User> findAll();
+
+    User findByLogin(String login);
 
     Integer deleteByLogin(String login);
 }

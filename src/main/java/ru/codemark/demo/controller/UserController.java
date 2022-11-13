@@ -5,11 +5,7 @@ import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
-import ru.codemark.demo.dto.UserDto;
-import ru.codemark.demo.generated.DeleteUsersRequest;
-import ru.codemark.demo.generated.GetUsersResponse;
-import ru.codemark.demo.generated.StandardResponse;
-import ru.codemark.demo.generated.User;
+import ru.codemark.demo.generated.*;
 import ru.codemark.demo.service.UserService;
 
 import javax.xml.bind.JAXBElement;
@@ -41,15 +37,31 @@ public class UserController {
                 GetUsersResponse.class, response);
     }
 
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "deleteUsersRequest")
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getUserByLoginRequest")
     @ResponsePayload
-    public JAXBElement<StandardResponse> deleteUser(@RequestPayload DeleteUsersRequest request) {
+    public JAXBElement<GetUsersResponse> getUserByLogin(@RequestPayload GetUserByLoginRequest request) {
+        ru.codemark.demo.entity.User userByLogin = userService.getUserByLogin(request.getLogin());
+        GetUsersResponse response = new GetUsersResponse();
+        List<User> userResponseList = response.getUser();
+
+        if (userByLogin != null) {
+            userResponseList.add(userToWsdlUser(userByLogin));
+        }
+
+        QName qname = new QName("getUserByLoginRequest");
+        return new JAXBElement<>(qname,
+                GetUsersResponse.class, response);
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "deleteUserByLoginRequest")
+    @ResponsePayload
+    public JAXBElement<StandardResponse> deleteUserByLogin(@RequestPayload DeleteUserByLoginRequest request) {
         Integer deletedNumber = userService.deleteUserByLogin(request.getLogin());
 
         StandardResponse response = new StandardResponse();
         response.setSuccess(deletedNumber > 0);
 
-        QName qname = new QName("getUsersRequest");
+        QName qname = new QName("deleteUserByLoginRequest");
         return new JAXBElement<>(qname,
                 StandardResponse.class, response);
     }

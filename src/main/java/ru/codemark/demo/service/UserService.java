@@ -19,6 +19,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public User getUserByLogin(String login) {
+        return userRepository.findByLogin(login);
+    }
+
     @Transactional
     public Integer deleteUserByLogin(String login) {
         System.out.println(login);
