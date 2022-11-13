@@ -9,3 +9,7 @@
 
 ### WSDL:
 * localhost:8080/ws/users.wsdl
+
+### How to run
+* Maven -> Plugins -> jaxb2 -> jaxb2:xjc
+* Maven -> Plugins -> spring-boot -> spring-boot:run
