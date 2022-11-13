@@ -8,16 +8,24 @@
 
     <xs:element name="deleteUserByLoginRequest">
         <xs:complexType>
-        <xs:sequence>
-            <xs:element name="login" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
+            <xs:sequence>
+                <xs:element name="login" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="getUserByLoginRequest">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="login" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="addUserRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="user" type="tns:user"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -43,8 +51,8 @@
         <xs:sequence>
             <xs:element name="login" type="xs:string"/>
             <xs:element name="name" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
             <xs:element name="role" type="tns:role" maxOccurs="unbounded"/>
-<!--            <xs:element name="password" type="xs:string"/>-->
         </xs:sequence>
     </xs:complexType>
 

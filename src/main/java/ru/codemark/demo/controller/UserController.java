@@ -1,6 +1,5 @@
 package ru.codemark.demo.controller;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -11,6 +10,7 @@ import ru.codemark.demo.service.UserService;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,6 +55,50 @@ public class UserController {
                 GetUsersResponse.class, response);
     }
 
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "addUserRequest")
+    @ResponsePayload
+    public JAXBElement<StandardResponse> saveOrUpdateUser(@RequestPayload AddUserRequest request) {
+        User userFromRequest = request.getUser();
+        StandardResponse standardResponse = new StandardResponse();
+
+        //validate user from request
+        List<String> errors = standardResponse.getErrors();
+        if (userFromRequest.getLogin() == null) {
+            errors.add("Поле login не может быть null");
+        }
+        if (userFromRequest.getName() == null) {
+            errors.add("Поле name не может быть null");
+        }
+        String userFromRequestPassword = userFromRequest.getPassword();
+        if (userFromRequestPassword == null) {
+            errors.add("Поле password не может быть null");
+        } else {
+            //now validate pw
+            boolean pwDigitMatch = userFromRequestPassword.matches("(.*\\d.*)");
+            boolean pwUppercaseLetterMatch = userFromRequestPassword.matches("(.*[A-Z].*)");
+
+            if (!pwDigitMatch) {
+                errors.add("Поле password должно содержать хотя бы одну цифру");
+            }
+
+            if (!pwUppercaseLetterMatch) {
+                errors.add("Поле password должно содержать хотя бы одну заглавную букву");
+            }
+        }
+        ru.codemark.demo.entity.User savedUser = null;
+        if (errors.size() == 0) {
+            ru.codemark.demo.entity.User convertedUser = wsdlUserToUser(userFromRequest, true);
+            convertedUser.setPassword(userFromRequestPassword);
+            savedUser = userService.saveOrUpdateUser(convertedUser);
+
+        }
+        standardResponse.setSuccess(savedUser != null);
+
+        QName qname = new QName("addUserRequest");
+        return new JAXBElement<>(qname,
+                StandardResponse.class, standardResponse);
+    }
+
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "deleteUserByLoginRequest")
     @ResponsePayload
     public JAXBElement<StandardResponse> deleteUserByLogin(@RequestPayload DeleteUserByLoginRequest request) {
@@ -75,15 +119,39 @@ public class UserController {
 
         if (includeRoles) {
             List<Role> roleList = user.getRole();
-            Set<ru.codemark.demo.entity.Role> savedUserUserRoles = savedUser.getUserRoles();
+            Set<ru.codemark.demo.entity.Role> savedUserRoles = savedUser.getUserRoles();
 
-            if (savedUserUserRoles != null && savedUserUserRoles.size() > 0) {
+            if (savedUserRoles != null && savedUserRoles.size() > 0) {
                 //convert user role to xml user role
-                for (ru.codemark.demo.entity.Role savedRole : savedUserUserRoles) {
+                for (ru.codemark.demo.entity.Role savedRole : savedUserRoles) {
                     Role role = new Role();
                     role.setRoleId(savedRole.getRoleId());
                     role.setName(savedRole.getName());
                     roleList.add(role);
+                }
+            }
+        }
+
+        return user;
+    }
+
+    private ru.codemark.demo.entity.User wsdlUserToUser(User savedUser, boolean includeRoles) {
+        ru.codemark.demo.entity.User user = new ru.codemark.demo.entity.User();
+        user.setLogin(savedUser.getLogin());
+        user.setName(savedUser.getName());
+
+        if (includeRoles) {
+            Set<ru.codemark.demo.entity.Role> roleSet = new HashSet<>();
+            user.setUserRoles(roleSet);
+            List<Role> savedUserUserRoles = savedUser.getRole();
+
+            if (savedUserUserRoles != null && savedUserUserRoles.size() > 0) {
+                //convert user role to xml user role
+                for (Role savedRole : savedUserUserRoles) {
+                    ru.codemark.demo.entity.Role role = new ru.codemark.demo.entity.Role();
+                    role.setRoleId(savedRole.getRoleId());
+                    role.setName(savedRole.getName());
+                    roleSet.add(role);
                 }
             }
         }
