@@ -88,7 +88,6 @@ public class UserController {
         ru.codemark.demo.entity.User savedUser = null;
         if (errors.size() == 0) {
             ru.codemark.demo.entity.User convertedUser = wsdlUserToUser(userFromRequest, true);
-            convertedUser.setPassword(userFromRequestPassword);
             savedUser = userService.saveOrUpdateUser(convertedUser);
 
         }
@@ -116,6 +115,8 @@ public class UserController {
         User user = new User();
         user.setLogin(savedUser.getLogin());
         user.setName(savedUser.getName());
+        //FIXME: Is it really OK to pass user password to FE?
+        user.setPassword(savedUser.getPassword());
 
         if (includeRoles) {
             List<Role> roleList = user.getRole();
@@ -139,6 +140,7 @@ public class UserController {
         ru.codemark.demo.entity.User user = new ru.codemark.demo.entity.User();
         user.setLogin(savedUser.getLogin());
         user.setName(savedUser.getName());
+        user.setPassword(savedUser.getPassword());
 
         if (includeRoles) {
             Set<ru.codemark.demo.entity.Role> roleSet = new HashSet<>();
